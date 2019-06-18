@@ -173,7 +173,24 @@ public:
     Matrix<T> operator*(Matrix<T> other) const;
     Matrix<T> operator+(Matrix<T> other) const;
     Matrix<T> operator-(Matrix<T> other) const;
-    Matrix<T> transpose() const;
+    Matrix<T> transpose() const{
+        Matrix<T> result(columns, rows);
+        ElementNode<T> *ptr_element;
+        Node<T>* temp = root;
+
+        for (int i = 0; i < rows ; ++i) {
+            temp = temp->down;
+            ptr_element = (ElementNode<T>*)temp->next;
+            while (ptr_element){
+                result.set(ptr_element->y,ptr_element->x,ptr_element->data);
+                ptr_element = (ElementNode<T> *)ptr_element->next;
+            }
+        }
+        return result;
+
+
+
+    };
     void print() const{
         Node<T>* temp = root ;
 
