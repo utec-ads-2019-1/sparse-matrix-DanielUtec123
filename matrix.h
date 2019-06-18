@@ -151,7 +151,25 @@ public:
 
 
     };
-    Matrix<T> operator*(T scalar) const;
+    Matrix<T> operator*(T scalar) const{
+
+        ElementNode<T> *ptr_element;
+        Node<T>* temp = root;
+        Matrix<T> result(rows, columns);
+
+
+        for (int i = 0; i < rows ; ++i) {
+            temp = temp->down;
+            ptr_element = (ElementNode<T>*)temp->next;
+            while (ptr_element){
+                result.set(ptr_element->x,ptr_element->y,scalar*(ptr_element->data));
+                ptr_element = (ElementNode<T> *)ptr_element->next;
+            }
+        }
+
+        return result;
+
+    };
     Matrix<T> operator*(Matrix<T> other) const;
     Matrix<T> operator+(Matrix<T> other) const;
     Matrix<T> operator-(Matrix<T> other) const;
