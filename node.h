@@ -6,9 +6,9 @@ class Matrix;
 
 template <typename T>
 class Node {
-protected:
-    Node<T> *next, *down;
+
 public:
+    Node<T> *next, *down;
     Node() : next(nullptr),down(nullptr){};
     friend class Matrix<T>;
 };
@@ -27,9 +27,10 @@ public:
     int x;
     int y;
     ElementNode() : Node<T>(){}
-    ElementNode(int x,int y) {
+    ElementNode(int x,int y,T data) {
         this->x = x;
         this->y = y;
+        this->data = data;
     }
 
 
