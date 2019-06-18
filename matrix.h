@@ -126,7 +126,28 @@ public:
         }
     };
 
-    T operator()(unsigned, unsigned) const{
+    T operator()(unsigned x, unsigned y) const{
+        Node<T>* temp_y = root ;
+
+        for (int j = 0; j <=  y ; ++j) {
+            temp_y = temp_y->down;
+        }
+        //temp_y apunta al header_row y
+        ElementNode<T>* ptr_column = (ElementNode<T> *)temp_y->next;
+
+        if(!ptr_column)
+            return 0;
+
+        while (ptr_column){
+            if(ptr_column->x == x)
+                return ptr_column->data;
+            if(ptr_column->x > x)
+                return 0;
+            ptr_column = (ElementNode<T> *)ptr_column->next;
+        }
+
+        return 0;
+
 
 
     };

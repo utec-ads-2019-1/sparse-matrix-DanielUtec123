@@ -13,6 +13,11 @@ int main() {
     Matriz.set(1,0,7);
     Matriz.print();
 
+    cout<< Matriz(1,1)<< endl;
+
+    cout<< Matriz(2,1)<< endl;
+
+    cout<< Matriz(1,0)<< endl;
 
     return EXIT_SUCCESS;
 }
