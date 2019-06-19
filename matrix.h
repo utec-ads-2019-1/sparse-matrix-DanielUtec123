@@ -27,7 +27,7 @@ public:
             temp = temp ->down;
             i++;
         }
-        cout << "se crearon "<< i << " filas"<< endl;
+        //cout << "se crearon "<< i << " filas"<< endl;
         i = 0;
         temp = root;
         while (i < columns){
@@ -36,7 +36,7 @@ public:
             i++;
         }
 
-        cout << "se crearon "<< i << " columnas"<< endl;
+        //cout << "se crearon "<< i << " columnas"<< endl;
 
     };
 
@@ -53,11 +53,12 @@ public:
         while (element_ptr){
             if(element_ptr->x==x)
                 return element_ptr;
+            element_ptr = (ElementNode<T> *) element_ptr->next;
         }
         return nullptr;
     }
 
-    void set(unsigned x, unsigned y , T data){
+    void set(unsigned y, unsigned x , T data){
         if(y>=rows or x >=columns)
             throw runtime_error("los indices");
 
@@ -65,7 +66,6 @@ public:
         if(element_ptr)
             element_ptr->data = data;
         else{
-            cout << "elemento no exite"<< endl;
             Node<T>* temp_y = root;
             for (int j = 0; j <=  y ; ++j) {
                 temp_y = temp_y->down;
@@ -117,7 +117,7 @@ public:
         }
     };
 
-    T operator()(unsigned x, unsigned y) const{
+    T operator()(unsigned y, unsigned x) const{
         Node<T>* temp_y = root ;
 
         for (int j = 0; j <=  y ; ++j) {
@@ -148,7 +148,7 @@ public:
             temp = temp->down;
             ptr_element = (ElementNode<T>*)temp->next;
             while (ptr_element){
-                result.set(ptr_element->x,ptr_element->y,scalar*(ptr_element->data));
+                result.set(ptr_element->y,ptr_element->x,scalar*(ptr_element->data));
                 ptr_element = (ElementNode<T> *)ptr_element->next;
             }
         }
@@ -156,8 +156,48 @@ public:
     };
     Matrix<T> operator*(Matrix<T> other) const{
 
+        //cout << "multi"<<endl;
         if(other.rows != columns)
             throw runtime_error("dimensiones incorrectas");
+        Matrix<T> result(rows, other.columns);
+
+        Node<T>* temp_1 = root;
+        Node<T>* temp_2;
+        Node<T>* temp_col= other.root;
+
+
+        ElementNode<T>* ptr_element1;
+        ElementNode<T>* ptr_element2;
+
+        for (int i = 0; i < rows ; ++i) {
+            temp_1 = temp_1->down;
+            temp_2 = temp_col;
+            for (int j = 0; j <other.columns ; ++j) {
+                ptr_element1 = (ElementNode<T>*)temp_1->next;
+                temp_2 = temp_2->next;
+                ptr_element2 = (ElementNode<T>*)temp_2->down;
+
+                T total = 0;
+                while (ptr_element1 and ptr_element2){
+                    if(ptr_element1->x == ptr_element2->y){
+                        total += ptr_element1->data*ptr_element2->data;
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->down;
+                    }
+                    else if(ptr_element1->x > ptr_element2->y){
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->down;
+                    }
+                    else if(ptr_element1->x < ptr_element2->y){
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                    }
+                }
+
+                if(total!=0)
+                    result.set(i,j,total);
+            }
+
+        }
+        return result;
 
 
 
@@ -185,28 +225,29 @@ public:
             while (ptr_element1 or ptr_element2){
                 if(ptr_element1 and ptr_element2){
                     if(ptr_element1->x == ptr_element2->x){
-                        result.set(ptr_element1->x,i,ptr_element1->data + ptr_element2->data);
+                        result.set(i,ptr_element1->x,ptr_element1->data + ptr_element2->data);
                         ptr_element1 = (ElementNode<T>*)ptr_element1->next;
                         ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                     }
                     else if(ptr_element1->x > ptr_element2->x){
-                        result.set(ptr_element2->x,i,ptr_element2->data);
+                        result.set(i,ptr_element2->x,ptr_element2->data);
                         ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                     }
                     else if(ptr_element1->x < ptr_element2->x){
-                        result.set(ptr_element1->x,i,ptr_element1->data);
+                        result.set(i,ptr_element1->x,ptr_element1->data);
                         ptr_element1 = (ElementNode<T>*)ptr_element1->next;
                     }
                 } else if(ptr_element1){
-                    result.set(ptr_element1->x,i,ptr_element1->data);
+                    result.set(i,ptr_element1->x,ptr_element1->data);
                     ptr_element1 = (ElementNode<T>*)ptr_element1->next;
 
                 } else if(ptr_element2){
-                    result.set(ptr_element2->x,i,ptr_element2->data);
+                    result.set(i,ptr_element2->x,ptr_element2->data);
                     ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                 }
             }
         }
+        //result.print();
         return result;
 
 
@@ -233,24 +274,24 @@ public:
 
                 if(ptr_element1 and ptr_element2){
                     if(ptr_element1->x == ptr_element2->x){
-                        result.set(ptr_element1->x,i,ptr_element2->data - ptr_element1->data);
+                        result.set(i,ptr_element1->x,ptr_element2->data - ptr_element1->data);
                         ptr_element1 = (ElementNode<T>*)ptr_element1->next;
                         ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                     }
                     else if(ptr_element1->x > ptr_element2->x){
-                        result.set(ptr_element2->x,i,ptr_element2->data);
+                        result.set(i,ptr_element2->x,ptr_element2->data);
                         ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                     }
                     else if(ptr_element1->x < ptr_element2->x){
-                        result.set(ptr_element1->x,i,(-1)*ptr_element1->data);
+                        result.set(i,ptr_element1->x,(-1)*ptr_element1->data);
                         ptr_element1 = (ElementNode<T>*)ptr_element1->next;
                     }
                 } else if(ptr_element1){
-                    result.set(ptr_element1->x,i,(-1)*ptr_element1->data);
+                    result.set(i,ptr_element1->x,(-1)*ptr_element1->data);
                     ptr_element1 = (ElementNode<T>*)ptr_element1->next;
 
                 } else if(ptr_element2){
-                    result.set(ptr_element2->x,i,ptr_element2->data);
+                    result.set(i,ptr_element2->x,ptr_element2->data);
                     ptr_element2 = (ElementNode<T>*)ptr_element2->next;
                 }
             }
@@ -293,23 +334,15 @@ public:
             }
             cout << endl;
         }
-        temp = root;
-        for (int i = 0; i < rows; ++i) {
-            temp = temp->down;
-            element_ptr = (ElementNode<T> *) temp->next;
-            for (int j = 0; j < columns; ++j) {
-                if (element_ptr) {
-                    if (element_ptr->x == j) {
-                        cout << element_ptr->data << " x = " << element_ptr->x << "  y = "<< element_ptr->y<< endl;
-                        element_ptr = (ElementNode<T> *) element_ptr->next;
-                    }
-                }
-            }
-            cout << endl;
-        }
+
     };
 
-    ~Matrix(){};
+    ~Matrix(){
+
+       /* root->next->DeleteAllNext();
+        root->DeleteAsRoot();
+        */
+    };
 };
 
 

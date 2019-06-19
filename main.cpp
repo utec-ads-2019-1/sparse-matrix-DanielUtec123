@@ -4,9 +4,9 @@
 #include "matrix.h"
 
 int main() {
-    //Tester::execute();
+    Tester::execute();
 
-
+/*
     Matrix<int> Matriz(3,4);
 
     Matriz.set(1,0,7);
@@ -24,9 +24,11 @@ int main() {
     D.set(2,2,6);
     D.print();
 
-    C = D + Matriz;
-    C.print();
+    //C = D + Matriz;
+    //C.print();
 
+    E  = Matriz+D;
+    E.print();
     E  = Matriz-D;
     E.print();
    /*

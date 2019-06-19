@@ -11,6 +11,26 @@ public:
     Node<T> *next, *down;
     Node() : next(nullptr),down(nullptr){};
     friend class Matrix<T>;
+
+    void DeleteAllNext(){
+        if(next)
+            next->DeleteAllNext();
+        delete this;
+    }
+
+    void DeleteAllDown(){
+        if(down)
+            down->DeleteAllDown();
+        delete this;
+    }
+
+    void DeleteAsRoot(){
+        if(down){
+            down->DeleteAsRoot();
+        }
+        this->DeleteAllNext();
+        delete this;
+    }
 };
 
 
