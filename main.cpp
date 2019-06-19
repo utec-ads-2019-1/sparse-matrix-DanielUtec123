@@ -13,11 +13,22 @@ int main() {
     Matriz.set(2,2,4);
     Matriz.print();
 
-    Matrix<int> C(4,3);
+    Matrix<int> C(3,4);
+    Matrix<int> D(3,4);
+    Matrix<int> E(3,4);
 
-    C = Matriz.transpose();
+
+
+    D.set(1,0,4);
+    D.set(1,1,5);
+    D.set(2,2,6);
+    D.print();
+
+    C = D + Matriz;
     C.print();
 
+    E  = Matriz-D;
+    E.print();
    /*
 
 

@@ -14,6 +14,7 @@ private:
     unsigned rows, columns;
 
 public:
+
     Matrix(unsigned rows, unsigned columns){
         this->rows = rows;
         this->columns = columns;
@@ -78,13 +79,10 @@ public:
             //temp_x apunta al header_column x
 
             ElementNode<T>* new_element = new ElementNode<T>(x,y,data);
-
             ElementNode<T>* ptr_column = (ElementNode<T> *)temp_y->next;
-
             ElementNode<T>* ptr_row = (ElementNode<T> *)temp_x->down;
 
             while (ptr_column){
-
                 if(ptr_column->next){
                     if(((ElementNode<T> *)ptr_column->next)->x>x) {
                         ElementNode<T>* t = (ElementNode<T> *)ptr_column ->next;
@@ -98,10 +96,7 @@ public:
                 }
                 ptr_column = (ElementNode<T> *)ptr_column->next;
             }
-
-
             while (ptr_row){
-
                 if(ptr_row->down){
                     if(((ElementNode<T> *)ptr_row->down)->y > y) {
                         ElementNode<T>* t = (ElementNode<T> *)ptr_row ->down;
@@ -111,18 +106,14 @@ public:
                     }
                 } else{
                     ptr_row->down = new_element;
-
                     break;
                 }
                 ptr_row = (ElementNode<T> *)ptr_row->down;
             }
             if(!ptr_column)
                 temp_y->next = new_element;
-
             if(!ptr_row)
                 temp_x->down = new_element;
-
-
         }
     };
 
@@ -137,7 +128,6 @@ public:
 
         if(!ptr_column)
             return 0;
-
         while (ptr_column){
             if(ptr_column->x == x)
                 return ptr_column->data;
@@ -145,10 +135,7 @@ public:
                 return 0;
             ptr_column = (ElementNode<T> *)ptr_column->next;
         }
-
         return 0;
-
-
 
     };
     Matrix<T> operator*(T scalar) const{
@@ -156,7 +143,6 @@ public:
         ElementNode<T> *ptr_element;
         Node<T>* temp = root;
         Matrix<T> result(rows, columns);
-
 
         for (int i = 0; i < rows ; ++i) {
             temp = temp->down;
@@ -166,13 +152,112 @@ public:
                 ptr_element = (ElementNode<T> *)ptr_element->next;
             }
         }
+        return result;
+    };
+    Matrix<T> operator*(Matrix<T> other) const{
 
+        if(other.rows != columns)
+            throw runtime_error("dimensiones incorrectas");
+
+
+
+
+    };
+    Matrix<T> operator+(Matrix<T> other) const{
+
+        if(other.rows != rows or other.columns != columns)
+            throw runtime_error("dimensiones incorrectas");
+
+        Matrix<T> result(rows, columns);
+        Node<T>* temp_1 = other.root;
+        Node<T>* temp_2 = root;
+
+        ElementNode<T>* ptr_element1;
+        ElementNode<T>* ptr_element2;
+
+        for (int i = 0; i < rows ; ++i) {
+            temp_1 = temp_1->down;
+            temp_2 = temp_2->down;
+
+            ptr_element1 = (ElementNode<T>*)temp_1->next;
+            ptr_element2 = (ElementNode<T>*)temp_2->next;
+
+            while (ptr_element1 or ptr_element2){
+                if(ptr_element1 and ptr_element2){
+                    if(ptr_element1->x == ptr_element2->x){
+                        result.set(ptr_element1->x,i,ptr_element1->data + ptr_element2->data);
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                    }
+                    else if(ptr_element1->x > ptr_element2->x){
+                        result.set(ptr_element2->x,i,ptr_element2->data);
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                    }
+                    else if(ptr_element1->x < ptr_element2->x){
+                        result.set(ptr_element1->x,i,ptr_element1->data);
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                    }
+                } else if(ptr_element1){
+                    result.set(ptr_element1->x,i,ptr_element1->data);
+                    ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+
+                } else if(ptr_element2){
+                    result.set(ptr_element2->x,i,ptr_element2->data);
+                    ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                }
+            }
+        }
+        return result;
+
+
+    };
+    Matrix<T> operator-(Matrix<T> other) const{
+        if(other.rows != rows or other.columns != columns)
+            throw runtime_error("dimensiones incorrectas");
+
+        Matrix<T> result(rows, columns);
+        Node<T>* temp_1 = other.root;
+        Node<T>* temp_2 = root;
+
+        ElementNode<T>* ptr_element1;
+        ElementNode<T>* ptr_element2;
+
+        for (int i = 0; i < rows ; ++i) {
+            temp_1 = temp_1->down;
+            temp_2 = temp_2->down;
+
+            ptr_element1 = (ElementNode<T>*)temp_1->next;
+            ptr_element2 = (ElementNode<T>*)temp_2->next;
+
+            while (ptr_element1 or ptr_element2){
+
+                if(ptr_element1 and ptr_element2){
+                    if(ptr_element1->x == ptr_element2->x){
+                        result.set(ptr_element1->x,i,ptr_element2->data - ptr_element1->data);
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                    }
+                    else if(ptr_element1->x > ptr_element2->x){
+                        result.set(ptr_element2->x,i,ptr_element2->data);
+                        ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                    }
+                    else if(ptr_element1->x < ptr_element2->x){
+                        result.set(ptr_element1->x,i,(-1)*ptr_element1->data);
+                        ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+                    }
+                } else if(ptr_element1){
+                    result.set(ptr_element1->x,i,(-1)*ptr_element1->data);
+                    ptr_element1 = (ElementNode<T>*)ptr_element1->next;
+
+                } else if(ptr_element2){
+                    result.set(ptr_element2->x,i,ptr_element2->data);
+                    ptr_element2 = (ElementNode<T>*)ptr_element2->next;
+                }
+            }
+        }
         return result;
 
     };
-    Matrix<T> operator*(Matrix<T> other) const;
-    Matrix<T> operator+(Matrix<T> other) const;
-    Matrix<T> operator-(Matrix<T> other) const;
     Matrix<T> transpose() const{
         Matrix<T> result(columns, rows);
         ElementNode<T> *ptr_element;
@@ -183,7 +268,7 @@ public:
             ptr_element = (ElementNode<T>*)temp->next;
             while (ptr_element){
                 result.set(ptr_element->y,ptr_element->x,ptr_element->data);
-                ptr_element = (ElementNode<T> *)ptr_element->next;
+            ptr_element = (ElementNode<T> *)ptr_element->next;
             }
         }
         return result;
@@ -195,16 +280,13 @@ public:
         Node<T>* temp = root ;
 
         ElementNode<T>* element_ptr;
-
         for (int i = 0; i < rows; ++i) {
             temp = temp->down;
             element_ptr = (ElementNode<T> *) temp->next;
             for (int j = 0; j < columns; ++j) {
                 if (element_ptr and element_ptr->x == j) {
-
                         cout << element_ptr->data << " ";
                         element_ptr = (ElementNode<T> *) element_ptr->next;
-
                 } else {
                     cout << 0 << " ";
                 }
@@ -225,14 +307,10 @@ public:
             }
             cout << endl;
         }
-
-
     };
 
     ~Matrix(){};
 };
-
-
 
 
 #endif //SPARSE_MATRIX_MATRIX_H
